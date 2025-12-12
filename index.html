@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
-<script>
-window.MathJax = {
-  tex: {
-    inlineMath: [['$', '$'], ['\\(', '\\)']]
-  }
-};
-</script>
-
-<script id="MathJax-script" async 
-  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-</script>
-
 <head>
   <meta charset="UTF-8" />
   <title>Model Spectrum Explorer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- MathJax for LaTeX -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+  </script>
+  <script id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script>
+
   <style>
     body {
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -50,7 +51,7 @@ window.MathJax = {
 
     .layout {
       display: grid;
-      grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 360px) minmax(0, 1fr);
       gap: 1.5rem;
     }
 
@@ -152,19 +153,40 @@ window.MathJax = {
       opacity: 0.7;
       margin-top: 0.3rem;
     }
+
+    .section-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      opacity: 0.8;
+      margin-top: 0.3rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .divider {
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+      margin: 0.4rem 0 0.3rem;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Model Spectrum Explorer</h1>
     <div class="description">
-      Adjust the parameters to load the corresponding precomputed spectrum (PNG).
+      Adjust the parameters to load the corresponding precomputed spectrum (PNG).<br />
+      Radii are in units of $R_g$, luminosities in units of $L_{\rm Edd}$.
     </div>
 
     <div class="layout">
       <div class="panel">
         <h2>Parameters</h2>
+
+        <div class="section-title">General / Geometry</div>
+        <div class="divider"></div>
+
         <div class="sliders">
+
           <!-- view -->
           <div class="slider-row">
             <div class="slider-header">
@@ -177,7 +199,7 @@ window.MathJax = {
             </div>
           </div>
 
-          <!-- radius -->
+          <!-- radius (R_g) -->
           <div class="slider-row">
             <div class="slider-header">
               <span>radius ($R_g$)</span>
@@ -188,6 +210,22 @@ window.MathJax = {
               <span>5.0</span><span>100.0</span>
             </div>
           </div>
+
+          <!-- jetrat (L_Edd) -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>jetrat ($L_{\rm Edd}$)</span>
+              <span id="label-jetrat"></span>
+            </div>
+            <!-- jetrat increasing to the right -->
+            <input id="slider-jetrat" type="range" min="0" max="1" step="1" value="0" />
+            <div class="slider-minmax">
+              <span>0.01</span><span>0.1</span>
+            </div>
+          </div>
+
+          <div class="section-title">Electron Component</div>
+          <div class="divider"></div>
 
           <!-- pspec_e -->
           <div class="slider-row">
@@ -213,19 +251,10 @@ window.MathJax = {
             </div>
           </div>
 
-          <!-- jetrat -->
-          <div class="slider-row">
-            <div class="slider-header">
-              <span>jetrat ($L_{\rm Edd}$)</span>
-              <span id="label-jetrat"></span>
-            </div>
-            <input id="slider-jetrat" type="range" min="0" max="1" step="1" value="1" />
-            <div class="slider-minmax">
-              <span>0.01</span><span>0.1</span>
-            </div>
-          </div>
+          <div class="section-title">Disk</div>
+          <div class="divider"></div>
 
-          <!-- rin -->
+          <!-- rin (R_g) -->
           <div class="slider-row">
             <div class="slider-header">
               <span>rin ($R_g$)</span>
@@ -237,7 +266,7 @@ window.MathJax = {
             </div>
           </div>
 
-          <!-- ldisk -->
+          <!-- ldisk (L_Edd) -->
           <div class="slider-row">
             <div class="slider-header">
               <span>ldisk ($L_{\rm Edd}$)</span>
@@ -249,6 +278,9 @@ window.MathJax = {
             </div>
           </div>
 
+          <div class="section-title">Hadronic Component</div>
+          <div class="divider"></div>
+
           <!-- hadsw toggle -->
           <div class="toggle-row">
             <span>Hadronic component (hadsw)</span>
@@ -258,7 +290,7 @@ window.MathJax = {
             </label>
           </div>
 
-          <!-- pspec_p (only relevant if hadsw = 1) -->
+          <!-- pspec_p -->
           <div class="slider-row">
             <div class="slider-header">
               <span>pspec_p</span>
@@ -271,6 +303,55 @@ window.MathJax = {
             <div class="note">Used only if hadsw &gt; 0 (proton component active).</div>
           </div>
 
+          <div class="section-title">Corona</div>
+          <div class="divider"></div>
+
+          <!-- corona toggle -->
+          <div class="toggle-row">
+            <span>Coronal component (tauCor &gt; 0)</span>
+            <label>
+              <input type="checkbox" id="toggle-corona" />
+              <span id="label-corona">off (tauCor ≤ 0)</span>
+            </label>
+          </div>
+
+          <!-- Tcor -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Tcor</span>
+              <span id="label-Tcor"></span>
+            </div>
+            <input id="slider-Tcor" type="range" min="0" max="1" step="1" value="0" />
+            <div class="slider-minmax">
+              <span>10.0</span><span>100.0</span>
+            </div>
+          </div>
+
+          <!-- tauCor -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>tauCor</span>
+              <span id="label-tauCor"></span>
+            </div>
+            <input id="slider-tauCor" type="range" min="0" max="2" step="1" value="0" />
+            <div class="slider-minmax">
+              <span>0.1</span><span>1.0</span>
+            </div>
+            <div class="note">Corona parameters are written to the filename only if tauCor &gt; 0 (toggle on).</div>
+          </div>
+
+          <!-- Rcor (R_g) -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>Rcor ($R_g$)</span>
+              <span id="label-Rcor"></span>
+            </div>
+            <input id="slider-Rcor" type="range" min="0" max="1" step="1" value="0" />
+            <div class="slider-minmax">
+              <span>10.0</span><span>100.0</span>
+            </div>
+          </div>
+
         </div>
 
         <div class="params-preview" id="params-preview"></div>
@@ -281,7 +362,7 @@ window.MathJax = {
         <img id="spectrum-img" src="" alt="Spectrum image" />
         <div class="filename" id="filename-display"></div>
         <div class="note">
-          Ensure a PNG file with exactly this name exists in the same folder (or adjust <code>basePath</code> in the script).
+          Ensure a PNG file with exactly this name exists in the correct folder (or adjust <code>basePath</code> in the script).
         </div>
       </div>
     </div>
@@ -299,11 +380,10 @@ window.MathJax = {
       pbeta: "0.1",
       eta_e: "1",
       rout: "100000.0",
-      // tauCor = -0.5, so coronal terms not included in filenames
     };
 
     // If your PNGs live in a subfolder, e.g. "spectra/", set basePath = "spectra/"
-    const basePath = "spectra/"; // e.g. "spectra/"
+    const basePath = "spectra/";
 
     // === DISCRETE GRIDS, WITH PYTHON-LIKE STRING FORMATTING ===
     const viewVals   = ["10.0", "60.0"];
@@ -311,9 +391,14 @@ window.MathJax = {
     const pspecEVals = ["1.7", "2.0", "2.4"];
     const pspecPVals = ["1.7", "2.0", "2.4"];
     const fscVals    = ["1e-06", "0.0001", "0.001"];  // str(1e-06), str(1e-04), str(1e-03)
-    const jetratVals = ["0.01", "0.1"];              // str(1e-1), str(1e-2)
+    const jetratVals = ["0.01", "0.1"];               // increasing with slider
     const rinVals    = ["10.0", "100.0"];
     const ldiskVals  = ["0.001", "0.01"];
+
+    // Corona parameter grids (from your arrays)
+    const TcorVals   = ["10.0", "100.0"];   // Tcor_array
+    const tauCorVals = ["0.1", "0.5", "1"]; // tauCor_array
+    const RcorVals   = ["10.0", "100.0"];   // Rcor_array
 
     // === UI ELEMENTS ===
     const sliderView   = document.getElementById("slider-view");
@@ -326,19 +411,34 @@ window.MathJax = {
     const sliderPspecP = document.getElementById("slider-pspec-p");
     const toggleHadsw  = document.getElementById("toggle-hadsw");
 
-    const labelView   = document.getElementById("label-view");
-    const labelRadius = document.getElementById("label-radius");
-    const labelPspecE = document.getElementById("label-pspec-e");
-    const labelFsc    = document.getElementById("label-fsc");
-    const labelJetrat = document.getElementById("label-jetrat");
-    const labelRin    = document.getElementById("label-rin");
-    const labelLdisk  = document.getElementById("label-ldisk");
-    const labelPspecP = document.getElementById("label-pspec-p");
-    const labelHadsw  = document.getElementById("label-hadsw");
+    const sliderTcor   = document.getElementById("slider-Tcor");
+    const sliderTauCor = document.getElementById("slider-tauCor");
+    const sliderRcor   = document.getElementById("slider-Rcor");
+    const toggleCorona = document.getElementById("toggle-corona");
+
+    const labelView    = document.getElementById("label-view");
+    const labelRadius  = document.getElementById("label-radius");
+    const labelPspecE  = document.getElementById("label-pspec-e");
+    const labelFsc     = document.getElementById("label-fsc");
+    const labelJetrat  = document.getElementById("label-jetrat");
+    const labelRin     = document.getElementById("label-rin");
+    const labelLdisk   = document.getElementById("label-ldisk");
+    const labelPspecP  = document.getElementById("label-pspec-p");
+    const labelHadsw   = document.getElementById("label-hadsw");
+
+    const labelTcor    = document.getElementById("label-Tcor");
+    const labelTauCor  = document.getElementById("label-tauCor");
+    const labelRcor    = document.getElementById("label-Rcor");
+    const labelCorona  = document.getElementById("label-corona");
 
     const paramsPreview    = document.getElementById("params-preview");
     const spectrumImg      = document.getElementById("spectrum-img");
     const filenameDisplay  = document.getElementById("filename-display");
+
+    // Initialize slider ranges for corona based on arrays length
+    sliderTcor.max   = String(TcorVals.length - 1);    // 0..1
+    sliderTauCor.max = String(tauCorVals.length - 1);  // 0..2
+    sliderRcor.max   = String(RcorVals.length - 1);    // 0..1
 
     function updateLabels() {
       labelView.textContent   = viewVals[parseInt(sliderView.value, 10)];
@@ -352,6 +452,18 @@ window.MathJax = {
 
       const hadswVal = toggleHadsw.checked ? 1 : 0;
       labelHadsw.textContent = hadswVal ? "on (1)" : "off (0)";
+
+      labelTcor.textContent   = TcorVals[parseInt(sliderTcor.value, 10)];
+      labelTauCor.textContent = tauCorVals[parseInt(sliderTauCor.value, 10)];
+      labelRcor.textContent   = RcorVals[parseInt(sliderRcor.value, 10)];
+
+      const coronaOn = toggleCorona.checked;
+      labelCorona.textContent = coronaOn ? "on (tauCor > 0)" : "off (tauCor ≤ 0)";
+
+      // Re-render LaTeX in case MathJax loaded after DOM update
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+      }
     }
 
     function buildFilename() {
@@ -365,10 +477,13 @@ window.MathJax = {
       const pspecP = pspecPVals[parseInt(sliderPspecP.value, 10)];
       const hadsw  = toggleHadsw.checked ? 1 : 0;
 
+      const Tcor   = TcorVals[parseInt(sliderTcor.value, 10)];
+      const tauCor = tauCorVals[parseInt(sliderTauCor.value, 10)];
+      const Rcor   = RcorVals[parseInt(sliderRcor.value, 10)];
+
+      const coronaOn = toggleCorona.checked;
+
       // Build param list in the SAME ORDER as in get_pars_str
-      // params = ['M_bh','view','dist','redshift','jetrat','radius',
-      //           'temp','plfrac_e','pspec_e','fsc','pbeta','eta_e']
-      // then optionally plfrac_p, pspec_p, then ldisk, rin, rout, ...
       const parts = [];
 
       parts.push(`M_bh_${CONSTS.M_bh}`);
@@ -390,13 +505,35 @@ window.MathJax = {
         parts.push(`pspec_p_${pspecP}`);
       }
 
-      // rout > rin, so we always include ldisk, rin, rout
+      // rout > rin, so include ldisk, rin, rout
       parts.push(`ldisk_${ldisk}`);
       parts.push(`rin_${rin}`);
       parts.push(`rout_${CONSTS.rout}`);
 
+      // If coronaOn, mimic get_pars_str case tauCor > 0
+      if (coronaOn) {
+        parts.push(`Tcor_${Tcor}`);
+        parts.push(`tauCor_${tauCor}`);
+        parts.push(`Rcor_${Rcor}`);
+      }
+
       const filename = parts.join("__") + ".png";
-      return { filename, hadsw, view, radius, pspecE, fsc, jetrat, rin, ldisk, pspecP };
+      return {
+        filename,
+        hadsw,
+        view,
+        radius,
+        pspecE,
+        fsc,
+        jetrat,
+        rin,
+        ldisk,
+        pspecP,
+        coronaOn,
+        Tcor,
+        tauCor,
+        Rcor,
+      };
     }
 
     function updateSpectrum() {
@@ -408,14 +545,20 @@ window.MathJax = {
       spectrumImg.alt = "Spectrum: " + info.filename;
       filenameDisplay.textContent = fullPath;
 
-      // Optional param preview for debugging
       paramsPreview.textContent =
         `M_bh=${CONSTS.M_bh}, view=${info.view}, dist=${CONSTS.dist}, redshift=${CONSTS.redshift}\n` +
         `jetrat=${info.jetrat}, radius=${info.radius}, temp=${CONSTS.temp}\n` +
         `plfrac_e=${CONSTS.plfrac_e}, pspec_e=${info.pspecE}, fsc=${info.fsc}\n` +
         `pbeta=${CONSTS.pbeta}, eta_e=${CONSTS.eta_e}, hadsw=${info.hadsw}` +
         (info.hadsw ? `, plfrac_p=${CONSTS.plfrac_p}, pspec_p=${info.pspecP}` : "") +
-        `\nldisk=${info.ldisk}, rin=${info.rin}, rout=${CONSTS.rout}`;
+        `\nldisk=${info.ldisk}, rin=${info.rin}, rout=${CONSTS.rout}` +
+        (info.coronaOn
+          ? `\nTcor=${info.Tcor}, tauCor=${info.tauCor}, Rcor=${info.Rcor}`
+          : `\ncorona: off (tauCor ≤ 0)`);
+
+      if (window.MathJax && MathJax.typesetPromise) {
+        MathJax.typesetPromise();
+      }
     }
 
     // Event listeners
@@ -429,6 +572,10 @@ window.MathJax = {
       sliderLdisk,
       sliderPspecP,
       toggleHadsw,
+      sliderTcor,
+      sliderTauCor,
+      sliderRcor,
+      toggleCorona,
     ].forEach((el) => {
       el.addEventListener("input", updateSpectrum);
       el.addEventListener("change", updateSpectrum);
