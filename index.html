@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Model Spectrum Explorer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 0;
+      padding: 1.5rem;
+      background: #050915;
+      color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      max-width: 1100px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 0.2rem;
+    }
+
+    .description {
+      text-align: center;
+      opacity: 0.8;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 340px) minmax(0, 1fr);
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 800px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 0.9rem;
+      padding: 1rem 1.25rem;
+    }
+
+    .panel h2 {
+      font-size: 1rem;
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    .sliders {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+    }
+
+    .slider-row input[type="range"] {
+      width: 100%;
+    }
+
+    .slider-minmax {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      opacity: 0.7;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.6rem;
+      font-size: 0.9rem;
+    }
+
+    .toggle-row label {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .spectrum-wrapper {
+      text-align: center;
+    }
+
+    .spectrum-wrapper img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 0.75rem;
+      background: #000;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .filename {
+      font-size: 0.8rem;
+      margin-top: 0.6rem;
+      opacity: 0.75;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      word-break: break-all;
+      text-align: left;
+    }
+
+    .params-preview {
+      font-size: 0.8rem;
+      margin-top: 0.4rem;
+      opacity: 0.8;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+        "Liberation Mono", "Courier New", monospace;
+      white-space: pre-wrap;
+    }
+
+    .note {
+      font-size: 0.75rem;
+      opacity: 0.7;
+      margin-top: 0.3rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Model Spectrum Explorer</h1>
+    <div class="description">
+      Adjust the parameters to load the corresponding precomputed spectrum (PNG).
+    </div>
+
+    <div class="layout">
+      <div class="panel">
+        <h2>Parameters</h2>
+        <div class="sliders">
+          <!-- view -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>view (deg)</span>
+              <span id="label-view"></span>
+            </div>
+            <input id="slider-view" type="range" min="0" max="1" step="1" value="1" />
+            <div class="slider-minmax">
+              <span>10.0</span><span>60.0</span>
+            </div>
+          </div>
+
+          <!-- radius -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>radius</span>
+              <span id="label-radius"></span>
+            </div>
+            <input id="slider-radius" type="range" min="0" max="3" step="1" value="3" />
+            <div class="slider-minmax">
+              <span>5.0</span><span>100.0</span>
+            </div>
+          </div>
+
+          <!-- pspec_e -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>pspec_e</span>
+              <span id="label-pspec-e"></span>
+            </div>
+            <input id="slider-pspec-e" type="range" min="0" max="2" step="1" value="2" />
+            <div class="slider-minmax">
+              <span>1.7</span><span>2.4</span>
+            </div>
+          </div>
+
+          <!-- fsc -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>fsc</span>
+              <span id="label-fsc"></span>
+            </div>
+            <input id="slider-fsc" type="range" min="0" max="2" step="1" value="2" />
+            <div class="slider-minmax">
+              <span>1e-06</span><span>0.001</span>
+            </div>
+          </div>
+
+          <!-- jetrat -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>jetrat</span>
+              <span id="label-jetrat"></span>
+            </div>
+            <input id="slider-jetrat" type="range" min="0" max="1" step="1" value="1" />
+            <div class="slider-minmax">
+              <span>0.1</span><span>0.01</span>
+            </div>
+          </div>
+
+          <!-- rin -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>rin</span>
+              <span id="label-rin"></span>
+            </div>
+            <input id="slider-rin" type="range" min="0" max="1" step="1" value="1" />
+            <div class="slider-minmax">
+              <span>10.0</span><span>100.0</span>
+            </div>
+          </div>
+
+          <!-- ldisk -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>ldisk</span>
+              <span id="label-ldisk"></span>
+            </div>
+            <input id="slider-ldisk" type="range" min="0" max="1" step="1" value="1" />
+            <div class="slider-minmax">
+              <span>0.001</span><span>0.01</span>
+            </div>
+          </div>
+
+          <!-- hadsw toggle -->
+          <div class="toggle-row">
+            <span>Hadronic component (hadsw)</span>
+            <label>
+              <input type="checkbox" id="toggle-hadsw" />
+              <span id="label-hadsw">off (0)</span>
+            </label>
+          </div>
+
+          <!-- pspec_p (only relevant if hadsw = 1) -->
+          <div class="slider-row">
+            <div class="slider-header">
+              <span>pspec_p</span>
+              <span id="label-pspec-p"></span>
+            </div>
+            <input id="slider-pspec-p" type="range" min="0" max="2" step="1" value="2" />
+            <div class="slider-minmax">
+              <span>1.7</span><span>2.4</span>
+            </div>
+            <div class="note">Used only if hadsw &gt; 0 (proton component active).</div>
+          </div>
+
+        </div>
+
+        <div class="params-preview" id="params-preview"></div>
+      </div>
+
+      <div class="panel spectrum-wrapper">
+        <h2>Spectrum</h2>
+        <img id="spectrum-img" src="" alt="Spectrum image" />
+        <div class="filename" id="filename-display"></div>
+        <div class="note">
+          Ensure a PNG file with exactly this name exists in the same folder (or adjust <code>basePath</code> in the script).
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // === CONSTANT PARAMETERS (edit if you used different values when generating PNGs) ===
+    const CONSTS = {
+      M_bh: "1000000.0",
+      dist: "1000.0",
+      redshift: "0.0",
+      temp: "511",
+      plfrac_e: "0.1",
+      plfrac_p: "0.1",
+      pbeta: "0.1",
+      eta_e: "1",
+      rout: "100000.0",
+      // tauCor = -0.5, so coronal terms not included in filenames
+    };
+
+    // If your PNGs live in a subfolder, e.g. "spectra/", set basePath = "spectra/"
+    const basePath = "spectra/"; // e.g. "spectra/"
+
+    // === DISCRETE GRIDS, WITH PYTHON-LIKE STRING FORMATTING ===
+    const viewVals   = ["10.0", "60.0"];
+    const radiusVals = ["5.0", "10.0", "20.0", "100.0"];
+    const pspecEVals = ["1.7", "2.0", "2.4"];
+    const pspecPVals = ["1.7", "2.0", "2.4"];
+    const fscVals    = ["1e-06", "0.0001", "0.001"];  // str(1e-06), str(1e-04), str(1e-03)
+    const jetratVals = ["0.1", "0.01"];              // str(1e-1), str(1e-2)
+    const rinVals    = ["10.0", "100.0"];
+    const ldiskVals  = ["0.001", "0.01"];
+
+    // === UI ELEMENTS ===
+    const sliderView   = document.getElementById("slider-view");
+    const sliderRadius = document.getElementById("slider-radius");
+    const sliderPspecE = document.getElementById("slider-pspec-e");
+    const sliderFsc    = document.getElementById("slider-fsc");
+    const sliderJetrat = document.getElementById("slider-jetrat");
+    const sliderRin    = document.getElementById("slider-rin");
+    const sliderLdisk  = document.getElementById("slider-ldisk");
+    const sliderPspecP = document.getElementById("slider-pspec-p");
+    const toggleHadsw  = document.getElementById("toggle-hadsw");
+
+    const labelView   = document.getElementById("label-view");
+    const labelRadius = document.getElementById("label-radius");
+    const labelPspecE = document.getElementById("label-pspec-e");
+    const labelFsc    = document.getElementById("label-fsc");
+    const labelJetrat = document.getElementById("label-jetrat");
+    const labelRin    = document.getElementById("label-rin");
+    const labelLdisk  = document.getElementById("label-ldisk");
+    const labelPspecP = document.getElementById("label-pspec-p");
+    const labelHadsw  = document.getElementById("label-hadsw");
+
+    const paramsPreview    = document.getElementById("params-preview");
+    const spectrumImg      = document.getElementById("spectrum-img");
+    const filenameDisplay  = document.getElementById("filename-display");
+
+    function updateLabels() {
+      labelView.textContent   = viewVals[parseInt(sliderView.value, 10)];
+      labelRadius.textContent = radiusVals[parseInt(sliderRadius.value, 10)];
+      labelPspecE.textContent = pspecEVals[parseInt(sliderPspecE.value, 10)];
+      labelFsc.textContent    = fscVals[parseInt(sliderFsc.value, 10)];
+      labelJetrat.textContent = jetratVals[parseInt(sliderJetrat.value, 10)];
+      labelRin.textContent    = rinVals[parseInt(sliderRin.value, 10)];
+      labelLdisk.textContent  = ldiskVals[parseInt(sliderLdisk.value, 10)];
+      labelPspecP.textContent = pspecPVals[parseInt(sliderPspecP.value, 10)];
+
+      const hadswVal = toggleHadsw.checked ? 1 : 0;
+      labelHadsw.textContent = hadswVal ? "on (1)" : "off (0)";
+    }
+
+    function buildFilename() {
+      const view   = viewVals[parseInt(sliderView.value, 10)];
+      const radius = radiusVals[parseInt(sliderRadius.value, 10)];
+      const pspecE = pspecEVals[parseInt(sliderPspecE.value, 10)];
+      const fsc    = fscVals[parseInt(sliderFsc.value, 10)];
+      const jetrat = jetratVals[parseInt(sliderJetrat.value, 10)];
+      const rin    = rinVals[parseInt(sliderRin.value, 10)];
+      const ldisk  = ldiskVals[parseInt(sliderLdisk.value, 10)];
+      const pspecP = pspecPVals[parseInt(sliderPspecP.value, 10)];
+      const hadsw  = toggleHadsw.checked ? 1 : 0;
+
+      // Build param list in the SAME ORDER as in get_pars_str
+      // params = ['M_bh','view','dist','redshift','jetrat','radius',
+      //           'temp','plfrac_e','pspec_e','fsc','pbeta','eta_e']
+      // then optionally plfrac_p, pspec_p, then ldisk, rin, rout, ...
+      const parts = [];
+
+      parts.push(`M_bh_${CONSTS.M_bh}`);
+      parts.push(`view_${view}`);
+      parts.push(`dist_${CONSTS.dist}`);
+      parts.push(`redshift_${CONSTS.redshift}`);
+      parts.push(`jetrat_${jetrat}`);
+      parts.push(`radius_${radius}`);
+      parts.push(`temp_${CONSTS.temp}`);
+      parts.push(`plfrac_e_${CONSTS.plfrac_e}`);
+      parts.push(`pspec_e_${pspecE}`);
+      parts.push(`fsc_${fsc}`);
+      parts.push(`pbeta_${CONSTS.pbeta}`);
+      parts.push(`eta_e_${CONSTS.eta_e}`);
+
+      // If hadsw > 0, include proton parameters
+      if (hadsw > 0) {
+        parts.push(`plfrac_p_${CONSTS.plfrac_p}`);
+        parts.push(`pspec_p_${pspecP}`);
+      }
+
+      // rout > rin, so we always include ldisk, rin, rout
+      parts.push(`ldisk_${ldisk}`);
+      parts.push(`rin_${rin}`);
+      parts.push(`rout_${CONSTS.rout}`);
+
+      const filename = parts.join("__") + ".png";
+      return { filename, hadsw, view, radius, pspecE, fsc, jetrat, rin, ldisk, pspecP };
+    }
+
+    function updateSpectrum() {
+      updateLabels();
+      const info = buildFilename();
+      const fullPath = basePath + info.filename;
+
+      spectrumImg.src = fullPath;
+      spectrumImg.alt = "Spectrum: " + info.filename;
+      filenameDisplay.textContent = fullPath;
+
+      // Optional param preview for debugging
+      paramsPreview.textContent =
+        `M_bh=${CONSTS.M_bh}, view=${info.view}, dist=${CONSTS.dist}, redshift=${CONSTS.redshift}\n` +
+        `jetrat=${info.jetrat}, radius=${info.radius}, temp=${CONSTS.temp}\n` +
+        `plfrac_e=${CONSTS.plfrac_e}, pspec_e=${info.pspecE}, fsc=${info.fsc}\n` +
+        `pbeta=${CONSTS.pbeta}, eta_e=${CONSTS.eta_e}, hadsw=${info.hadsw}` +
+        (info.hadsw ? `, plfrac_p=${CONSTS.plfrac_p}, pspec_p=${info.pspecP}` : "") +
+        `\nldisk=${info.ldisk}, rin=${info.rin}, rout=${CONSTS.rout}`;
+    }
+
+    // Event listeners
+    [
+      sliderView,
+      sliderRadius,
+      sliderPspecE,
+      sliderFsc,
+      sliderJetrat,
+      sliderRin,
+      sliderLdisk,
+      sliderPspecP,
+      toggleHadsw,
+    ].forEach((el) => {
+      el.addEventListener("input", updateSpectrum);
+      el.addEventListener("change", updateSpectrum);
+    });
+
+    // Initial render
+    updateSpectrum();
+  </script>
+</body>
+</html>
