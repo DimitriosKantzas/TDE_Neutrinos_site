@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Model Spectrum Explorer</title>
+  <title>TDE Model Spectrum Explorer</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <!-- MathJax for LaTeX -->
@@ -172,7 +172,7 @@
 </head>
 <body>
   <div class="container">
-    <h1>Model Spectrum Explorer</h1>
+    <h1>TDE Model Spectrum Explorer</h1>
     <div class="description">
       Adjust the parameters to load the corresponding precomputed spectrum (PNG).<br />
       Radii are in units of $R_g$, luminosities in units of $L_{\rm Edd}$.
@@ -190,7 +190,7 @@
           <!-- view -->
           <div class="slider-row">
             <div class="slider-header">
-              <span>view (deg)</span>
+              <span>viewing angle (deg)</span>
               <span id="label-view"></span>
             </div>
             <input id="slider-view" type="range" min="0" max="1" step="1" value="1" />
@@ -214,7 +214,7 @@
           <!-- jetrat (L_Edd) -->
           <div class="slider-row">
             <div class="slider-header">
-              <span>jetrat ($L_{\rm Edd}$)</span>
+              <span>power ($L_{\rm Edd}$)</span>
               <span id="label-jetrat"></span>
             </div>
             <!-- jetrat increasing to the right -->
@@ -230,25 +230,28 @@
           <!-- pspec_e -->
           <div class="slider-row">
             <div class="slider-header">
-              <span>pspec_e</span>
+              <span>$p_e$</span>
               <span id="label-pspec-e"></span>
             </div>
             <input id="slider-pspec-e" type="range" min="0" max="2" step="1" value="2" />
             <div class="slider-minmax">
               <span>1.7</span><span>2.4</span>
             </div>
+            <div class="note">Power-law index for non-thermal electrons.</div>
+
           </div>
 
           <!-- fsc -->
           <div class="slider-row">
             <div class="slider-header">
-              <span>fsc</span>
+              <span>$f{sc}$</span>
               <span id="label-fsc"></span>
             </div>
             <input id="slider-fsc" type="range" min="0" max="2" step="1" value="2" />
             <div class="slider-minmax">
               <span>1e-06</span><span>0.001</span>
             </div>
+            <div class="note">Acceleration efficiency for non-thermal electrons.</div>
           </div>
 
           <div class="section-title">Disk</div>
@@ -257,7 +260,7 @@
           <!-- rin (R_g) -->
           <div class="slider-row">
             <div class="slider-header">
-              <span>rin ($R_g$)</span>
+              <span>$r_{\rm disk}$ ($R_g$)</span>
               <span id="label-rin"></span>
             </div>
             <input id="slider-rin" type="range" min="0" max="1" step="1" value="1" />
@@ -269,7 +272,7 @@
           <!-- ldisk (L_Edd) -->
           <div class="slider-row">
             <div class="slider-header">
-              <span>ldisk ($L_{\rm Edd}$)</span>
+              <span>$L_{\rm disk}$ ($L_{\rm Edd}$)</span>
               <span id="label-ldisk"></span>
             </div>
             <input id="slider-ldisk" type="range" min="0" max="1" step="1" value="1" />
@@ -293,7 +296,7 @@
           <!-- pspec_p -->
           <div class="slider-row">
             <div class="slider-header">
-              <span>pspec_p</span>
+              <span>$p_p$</span>
               <span id="label-pspec-p"></span>
             </div>
             <input id="slider-pspec-p" type="range" min="0" max="2" step="1" value="2" />
@@ -308,42 +311,43 @@
 
           <!-- corona toggle -->
           <div class="toggle-row">
-            <span>Coronal component (tauCor &gt; 0)</span>
+            <span>Coronal component ($\tau_{\rm Cor}$ &gt; 0)</span>
             <label>
               <input type="checkbox" id="toggle-corona" />
-              <span id="label-corona">off (tauCor ≤ 0)</span>
+              <span id="label-corona">off ($\tau_{\rm Cor}$ ≤ 0)</span>
             </label>
           </div>
 
           <!-- Tcor -->
           <div class="slider-row">
             <div class="slider-header">
-              <span>Tcor</span>
+              <span>T$_{\rm cor}$</span>
               <span id="label-Tcor"></span>
             </div>
             <input id="slider-Tcor" type="range" min="0" max="1" step="1" value="0" />
             <div class="slider-minmax">
               <span>10.0</span><span>100.0</span>
             </div>
+            <div class="note">Temperature of the corona (keV).</div>
           </div>
 
           <!-- tauCor -->
           <div class="slider-row">
             <div class="slider-header">
-              <span>tauCor</span>
+              <span>$\tau_{\rm Cor}$</span>
               <span id="label-tauCor"></span>
             </div>
             <input id="slider-tauCor" type="range" min="0" max="2" step="1" value="0" />
             <div class="slider-minmax">
               <span>0.1</span><span>1.0</span>
             </div>
-            <div class="note">Corona parameters are written to the filename only if tauCor &gt; 0 (toggle on).</div>
+            <div class="note">Corona parameters are written to the filename only if $\tau_{\rm Cor}$ &gt; 0 (toggle on).</div>
           </div>
 
           <!-- Rcor (R_g) -->
           <div class="slider-row">
             <div class="slider-header">
-              <span>Rcor ($R_g$)</span>
+              <span>$R_{\rm cor}$ ($R_g$)</span>
               <span id="label-Rcor"></span>
             </div>
             <input id="slider-Rcor" type="range" min="0" max="1" step="1" value="0" />
